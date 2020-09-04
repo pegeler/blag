@@ -3,47 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/</loc>
+    <loc>/blag/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/</loc>
+    <loc>/blag/categories/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/monte-carlo/</loc>
+    <loc>/blag/tags/monte-carlo/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/2020/03/14/monte-carlo-method-for-approximating-pi/</loc>
+    <loc>/blag/2020/03/14/monte-carlo-method-for-approximating-pi/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/pi/</loc>
+    <loc>/blag/tags/pi/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/</loc>
+    <loc>/blag/post/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/categories/r/</loc>
+    <loc>/blag/categories/r/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/reticulate/</loc>
+    <loc>/blag/tags/reticulate/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
   <url>
-    <loc>/tags/</loc>
+    <loc>/blag/tags/</loc>
     <lastmod>2020-03-14T15:00:00-05:00</lastmod>
   </url>
   
