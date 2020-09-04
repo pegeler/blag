@@ -1,0 +1,177 @@
+---
+title: "Monte Carlo Method for Approximating Pi"
+author: "Paul W. Egeler, MS"
+date: 2020-03-14T15:00:00-05:00
+categories: ["R"]
+tags: ["pi", "reticulate", "monte carlo"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+set.seed(999)
+```
+
+In honor of Pi Day, I am going to walk through a common approach for
+approximating this important transcendental number. This is a popular
+programming exercise that shows how we can use random data to estimate $\pi$. I
+find this interesting because it allows us to use basic principles of geometry
+to approximate an irrational number.
+
+Please note that there are better ways to compute $\pi$. However, it's my view
+that this is the most intuitive way to do it. If you're interested in this
+method or other methods of extimating $\pi$, check out the
+[Wikipedia page](https://en.wikipedia.org/wiki/Approximations_of_%CF%80#Summing_a_circle's_area).
+
+## How Does it Work?
+
+Consider that the area of a circle is defined by $A_{circle}={\pi}r^2$. Then,
+for a unit circle ($r = 1$),
+$$
+\begin{align}
+A_{circle} &= {\pi}r^2 \\
+&= {\pi}1^2 \\
+&= \pi.
+\end{align}
+$$
+Also, if we draw a unit square over the first quadrant of the circle, we can see
+that the total area of the square is $1^2=1$ and the area of the circle within
+the square is $A_{quadrant} = \frac{\pi}{4}$. The figure below illustrates this:
+the area of the circle quadrant is depicted in blue while the total area of the
+unit square is the sum of the areas of red and blue.
+
+```{r area, echo = FALSE}
+x <- seq(0, 1, 0.001)
+y <- sqrt(1 - x**2)
+plot(x = c(0,1), y = c(0,1), asp = 1, type = "n", xlab = "x", ylab = "y")
+rect(0, 0, 1, 1, col = "red", border = "red")
+polygon(c(0, x), c(0, y), col = "blue", border = "blue")
+```
+
+If we uniformly sample points within the unit square pictured above, the density
+of those points are defined as
+$$
+\begin{align}
+\rho &= \frac{points_{square}}{A_{square}} \\
+&= \frac{points_{square}}{1^2} \\
+&= points_{square}.
+\end{align}
+$$
+Further, we can observe whether each point is within the quadrant since all points
+within the quadrant satisfy $x^2 + y^2 \le 1$. Thus we approximate the area of the
+quadrant since a uniform distribution of points gives
+$\rho \approx \frac{points_{quadrant}}{A_{quadrant}}$, so $A_{quadrant} \approx \frac{points_{quadrant}}{\rho}$.
+By substitution $A_{quadrant} \approx \frac{points_{quadrant}}{points_{square}}$. Then
+$$
+\begin{align}
+\frac{\pi}{4} &= A_{quadrant} \\
+\pi &= 4 \times A_{quadrant} \\
+\pi &\approx 4 \times \frac{points_{quadrant}}{points_{square}}.
+\end{align}
+$$
+
+## The Function
+
+Thanks to R's vectorized operations, it is simple to generate many points, test
+if they are within the area of the quadrant, and do the scalar multiplication and
+division operations required for this analysis.
+
+```{r}
+approximate_pi <- function(n = 10000) {
+  4 * sum(runif(n)**2 + runif(n)**2 <= 1) / n
+}
+approximate_pi()
+```
+
+## Accuracy
+
+The number stabilizes after around 1000 sampled points. This approximation will
+approach $\pi$ as the number of points sampled approaches infinity. Here are
+numbers as a percent of the real $\pi$ from a sampling of 2 points to 8,388,608
+points.
+
+```{r}
+pi_vec <- sapply(1:23, function(x) approximate_pi(2**x))
+100 * pi_vec / pi
+```
+
+Plotted out, that looks like this:
+
+```{r accuracy, echo = FALSE}
+plot(
+  pi_vec, 
+  type = "b", 
+  ylab = "Approximate value of pi", 
+  xlab = "Number of points sampled [log2(x)]"
+)
+abline(h = pi, col = "red")
+```
+
+## Visualizing the Points
+
+Now we can define a function to help us understand what's going on here.
+The function below makes a bunch of random x/y coordinates and then determines
+whether each ordered pair is inside the quadrant or not.
+
+```{r}
+generate_pi_data <- function(n) {
+  dat <- data.frame(
+    x = runif(n),
+    y = runif(n)
+  )
+  dat$inside <- with(dat, x**2 + y**2 <= 1)
+  dat
+}
+
+pi_data <- generate_pi_data(2**13)
+```
+
+Here are the first few rows of data.
+
+```{r}
+head(pi_data)
+```
+
+And here are the points plotted with the color coding from our first figure.
+
+```{r points, echo=FALSE}
+with(pi_data,
+  plot(
+    x, y,
+    col = scales::alpha(ifelse(inside, "blue", "red"), 0.25),
+    pch = 20L,
+    asp = 1
+  )
+)
+```
+
+## Bonus Python Code
+
+I've been wanting to try the `reticulate` package for including python code in
+Rmarkdown reports. So here's some bonus material.
+
+You can sum the area systematically by sampling points at set intervals. Here is
+some python code to do that.
+
+```{python}
+def estimate_pi(n):
+    i = 0
+
+    for x in range(n):
+        x = x / (n - 1)
+        for y in range(n):
+            y = y / (n - 1)
+            if x*x + y*y <= 1:
+                i += 1
+
+    return 4*i/(n*n)
+
+estimate_pi(1000)
+```
+
+Iterating over several sample sizes...
+
+```{python}
+for i in range(1, 12):
+    print('% 8i: %f' % (2**(2*i), estimate_pi(2**i)))
+```

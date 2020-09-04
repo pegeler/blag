@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on A Blag</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on A Blag</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 Mar 2020 15:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Monte Carlo Method for Approximating Pi</title>
+      <link>/2020/03/14/monte-carlo-method-for-approximating-pi/</link>
+      <pubDate>Sat, 14 Mar 2020 15:00:00 -0500</pubDate>
+      
+      <guid>/2020/03/14/monte-carlo-method-for-approximating-pi/</guid>
+      <description>In honor of Pi Day, I am going to walk through a common approach for approximating this important transcendental number. This is a popular programming exercise that shows how we can use random data to estimate \(\pi\). This is fun to me because it allows us to use basic principles of geometry to approximate an irrational number.
+Please note that there are better ways to compute \(\pi\). However, it’s my view that this is the most intuitive way to do it.</description>
+    </item>
+    
+  </channel>
+</rss>

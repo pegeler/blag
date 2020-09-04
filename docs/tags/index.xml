@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on A Blag</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on A Blag</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 Mar 2020 15:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>monte carlo</title>
+      <link>/tags/monte-carlo/</link>
+      <pubDate>Sat, 14 Mar 2020 15:00:00 -0500</pubDate>
+      
+      <guid>/tags/monte-carlo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pi</title>
+      <link>/tags/pi/</link>
+      <pubDate>Sat, 14 Mar 2020 15:00:00 -0500</pubDate>
+      
+      <guid>/tags/pi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>reticulate</title>
+      <link>/tags/reticulate/</link>
+      <pubDate>Sat, 14 Mar 2020 15:00:00 -0500</pubDate>
+      
+      <guid>/tags/reticulate/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

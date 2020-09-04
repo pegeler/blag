@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.74.3" />
+
+
+<title>Monte Carlo Method for Approximating Pi - A Blag</title>
+<meta property="og:title" content="Monte Carlo Method for Approximating Pi - A Blag">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="https://github.com/pegeler/">GitHub</a></li>
+    
+    <li><a href="https://paul.egeler.us/">Home</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Monte Carlo Method for Approximating Pi</h1>
+
+    
+    <span class="article-date">2020-03-14</span>
+    
+
+    <div class="article-content">
+      
+
+
+<p>In honor of Pi Day, I am going to walk through a common approach for
+approximating this important transcendental number. This is a popular
+programming exercise that shows how we can use random data to estimate <span class="math inline">\(\pi\)</span>.
+This is fun to me because it allows us to use basic principles of geometry to
+approximate an irrational number.</p>
+<p>Please note that there are better ways to compute <span class="math inline">\(\pi\)</span>. However, it’s my view
+that this is the most intuitive way to do it. If you’re interested in this
+method or other methods of extimating <span class="math inline">\(\pi\)</span>, check out the
+<a href="https://en.wikipedia.org/wiki/Approximations_of_%CF%80#Summing_a_circle&#39;s_area">Wikipedia page</a>.</p>
+<div id="how-does-it-work" class="section level2">
+<h2>How Does it Work?</h2>
+<p>Consider that the area of a circle is defined by <span class="math inline">\(A_{circle}={\pi}r^2\)</span>. Then,
+for a unit circle (<span class="math inline">\(r = 1\)</span>),
+<span class="math display">\[
+\begin{align}
+A_{circle} &amp;= {\pi}r^2 \\
+&amp;= {\pi}1^2 \\
+&amp;= \pi.
+\end{align}
+\]</span>
+Also, if we draw a unit square over the first quadrant of the circle, we can see
+that the total area of the square is <span class="math inline">\(1^2=1\)</span> and the area of the circle within
+the square is <span class="math inline">\(A_{quadrant} = \frac{\pi}{4}\)</span>. The figure below illustrates this:
+the area of the circle quadrant is depicted in blue while the total area of the
+unit square is the sum of the areas of red and blue.</p>
+<p><img src="/post/2020-03-14-Monte-Carlo-Method-for-Approximating-Pi_files/figure-html/area-1.png" width="672" /></p>
+<p>If we uniformly sample points within the unit square pictured above, the density
+of those points are defined as
+<span class="math display">\[
+\begin{align}
+\rho &amp;= \frac{points_{square}}{A_{square}} \\
+&amp;= \frac{points_{square}}{1^2} \\
+&amp;= points_{square}.
+\end{align}
+\]</span>
+Further, we can observe whether each point is within the quadrant since all points
+within the quadrant satisfy <span class="math inline">\(x^2 + y^2 \le 1\)</span>. Thus we approximate the area of the
+quadrant since a uniform distribution of points gives
+<span class="math inline">\(\rho \approx \frac{points_{quadrant}}{A_{quadrant}}\)</span>, so <span class="math inline">\(A_{quadrant} \approx \frac{points_{quadrant}}{\rho}\)</span>.
+By substitution <span class="math inline">\(A_{quadrant} \approx \frac{points_{quadrant}}{points_{square}}\)</span>. Then
+<span class="math display">\[
+\begin{align}
+\frac{\pi}{4} &amp;= A_{quadrant} \\
+\pi &amp;= 4 \times A_{quadrant} \\
+\pi &amp;\approx 4 \times \frac{points_{quadrant}}{points_{square}}.
+\end{align}
+\]</span></p>
+</div>
+<div id="the-function" class="section level2">
+<h2>The Function</h2>
+<p>Thanks to R’s vectorized operations, it is simple to generate many points, test
+if they are within the area of the quadrant, and do the scalar multiplication and
+division operations required for this analysis.</p>
+<pre class="r"><code>approximate_pi &lt;- function(n = 10000) {
+  4 * sum(runif(n)**2 + runif(n)**2 &lt;= 1) / n
+}
+approximate_pi()</code></pre>
+<pre><code>## [1] 3.164</code></pre>
+</div>
+<div id="accuracy" class="section level2">
+<h2>Accuracy</h2>
+<p>The number stabilizes after around 1000 sampled points. This approximation will
+approach <span class="math inline">\(\pi\)</span> as the number of points sampled approaches infinity. Here are
+numbers as a percent of the real <span class="math inline">\(\pi\)</span> from a sampling of 2 points to 8,388,608
+points.</p>
+<pre class="r"><code>pi_vec &lt;- sapply(1:23, function(x) approximate_pi(2**x))
+100 * pi_vec / pi</code></pre>
+<pre><code>##  [1] 127.32395 127.32395 111.40846  87.53522  83.55635 109.41902 100.46656
+##  [8] 103.45071 102.70467  97.35806  99.84486 100.40439  99.89149  99.83709
+## [15]  99.98474  99.78657  99.83029  99.98474  99.89489  99.96847 100.04054
+## [22] 100.01173 100.02083</code></pre>
+<p>Plotted out, that looks like this:</p>
+<p><img src="/post/2020-03-14-Monte-Carlo-Method-for-Approximating-Pi_files/figure-html/accuracy-1.png" width="672" /></p>
+</div>
+<div id="visualizing-the-points" class="section level2">
+<h2>Visualizing the Points</h2>
+<p>Now we can define a function to help us understand what’s going on here.
+The function below makes a bunch of random x/y coordinates and then determines
+whether each ordered pair is inside the quadrant or not.</p>
+<pre class="r"><code>generate_pi_data &lt;- function(n) {
+  dat &lt;- data.frame(
+    x = runif(n),
+    y = runif(n)
+  )
+  dat$inside &lt;- with(dat, x**2 + y**2 &lt;= 1)
+  dat
+}
+
+pi_data &lt;- generate_pi_data(2**13)</code></pre>
+<p>Here are the first few rows of data.</p>
+<pre class="r"><code>head(pi_data)</code></pre>
+<pre><code>##            x         y inside
+## 1 0.09489199 0.5803128   TRUE
+## 2 0.80695220 0.9651395  FALSE
+## 3 0.39945924 0.5285250   TRUE
+## 4 0.97061080 0.7273537  FALSE
+## 5 0.65415596 0.3123700   TRUE
+## 6 0.51823630 0.1749654   TRUE</code></pre>
+<p>And here are the points plotted with the color coding from our first figure.</p>
+<p><img src="/post/2020-03-14-Monte-Carlo-Method-for-Approximating-Pi_files/figure-html/points-1.png" width="672" /></p>
+</div>
+<div id="bonus-python-code" class="section level2">
+<h2>Bonus Python Code</h2>
+<p>I’ve been wanting to try the <code>reticulate</code> package for including python code in
+Rmarkdown reports. So here’s some bonus material.</p>
+<p>You can sum the area systematically by sampling points at set intervals. Here is
+some python code to do that.</p>
+<pre class="python"><code>def estimate_pi(n):
+    i = 0
+
+    for x in range(n):
+        x = x / (n - 1)
+        for y in range(n):
+            y = y / (n - 1)
+            if x*x + y*y &lt;= 1:
+                i += 1
+
+    return 4*i/(n*n)
+
+estimate_pi(1000)</code></pre>
+<pre><code>## 3.139156</code></pre>
+<p>Iterating over several sample sizes…</p>
+<pre class="python"><code>for i in range(1, 12):
+    print(&#39;% 8i: %f&#39; % (2**(2*i), estimate_pi(2**i)))</code></pre>
+<pre><code>##        4: 3.000000
+##       16: 2.750000
+##       64: 2.812500
+##      256: 3.015625
+##     1024: 3.054688
+##     4096: 3.102539
+##    16384: 3.120605
+##    65536: 3.132507
+##   262144: 3.136810
+##  1048576: 3.139275
+##  4194304: 3.140438</code></pre>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
